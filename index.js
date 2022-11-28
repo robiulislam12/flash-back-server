@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // database connection
-const uri = `mongodb://localhost:27017`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster1.ftnnc4j.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
