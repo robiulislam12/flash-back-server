@@ -26,6 +26,7 @@ async function run() {
     const database = client.db("flashBack");
     const usersCollection = database.collection("users");
     const productsCollection = database.collection("products");
+    const ordersCollection = database.collection("orders");
     const reportedItemsCollection = database.collection("reportedItems");
     const advertiseItemsCollection = database.collection("advertiseItems");
 
@@ -154,6 +155,29 @@ async function run() {
       const advertiseDetails = req.body;
       const result = await advertiseItemsCollection.insertOne(advertiseDetails);
       res.send(result)
+    })
+
+    /**
+     * @order_route
+     * post a booking
+     */
+    // get all orders
+    app.get('/orders', async(req, res) =>{
+      let query = {};
+      if(req.query.email) {
+        query= {
+          buyerEmail : req.query.email
+        }
+      }
+      const result = await ordersCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    // post a order
+    app.post('/buy', async(req, res) =>{
+      const orderDetails = req.body;
+      const order = await ordersCollection.insertOne(orderDetails);
+      res.send(order) 
     })
   
 
