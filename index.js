@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SK_KEY);
 
 // Create a app
 const app = express();
@@ -167,6 +168,23 @@ async function run() {
     });
 
     /**
+     * @Stripe_payment
+     *
+     */
+    app.post("/create-payment-intent", async (req, res) => {
+      const { productPrice } = req.body;
+      const amount = parseFloat(productPrice) * 100;
+
+      // const paymentIntent = await stripe.paymentIntents.create({
+      //   amount: amount, //calculateOrderAmount(items),
+      //   currency: "usd",
+      // });
+      // res.send({
+      //   clientSecret: paymentIntent.client_secret,
+      // });
+    });
+
+    /**
      * @DELETE_advertise_and_order
      */
     // delete advertisement and orders product
@@ -199,6 +217,14 @@ async function run() {
     app.post("/buy", async (req, res) => {
       const orderDetails = req.body;
       const order = await ordersCollection.insertOne(orderDetails);
+      res.send(order);
+    });
+
+    // get one product
+    app.get("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const order = await ordersCollection.findOne(query);
       res.send(order);
     });
 
