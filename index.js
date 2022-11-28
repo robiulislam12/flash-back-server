@@ -89,15 +89,15 @@ async function run() {
     app.get("/products", async (req, res) => {
       let query = {};
 
-      if(req.query.email){
+      if (req.query.email) {
         query = {
-            sellerEmail: req.query.email
-        }
+          sellerEmail: req.query.email,
+        };
       }
-      if(req.query.category){
+      if (req.query.category) {
         query = {
-          category : req.query.category
-        }
+          category: req.query.category,
+        };
       }
 
       const users = await productsCollection.find(query).toArray();
@@ -118,77 +118,83 @@ async function run() {
       res.send(result);
     });
 
-      // get reported items
-      app.get('/reportedItems', async(req, res) =>{
-        let query = {};
-        if(req.query.reportedId) {
-          query= {
-            reportedProductId : req.query.reportedId
-          }
-        }
-        const result = await reportedItemsCollection.find(query).toArray();
-        res.send(result)
-      })
+    // get reported items
+    app.get("/reportedItems", async (req, res) => {
+      let query = {};
+      if (req.query.reportedId) {
+        query = {
+          reportedProductId: req.query.reportedId,
+        };
+      }
+      const result = await reportedItemsCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // Report a Product
-    app.post('/reportedItem', async(req, res) =>{
+    app.post("/reportedItem", async (req, res) => {
       const reportedDetails = req.body;
       // console.log(reportedDetails)
       const result = await reportedItemsCollection.insertOne(reportedDetails);
-      res.send(result)
+      res.send(result);
+    });
+
+    // Reported items delete
+    app.delete('/reportedItem/:id', async(req, res) =>{
+      const id = req.params.id;
+      const filter = {_id : ObjectId(id)}
+      const deleteReported = await reportedItemsCollection.deleteOne(filter);
+      res.send(deleteReported)
     })
 
-     // get advertisement items
-     app.get('/advertisementItems', async(req, res) =>{
+    // get advertisement items
+    app.get("/advertisementItems", async (req, res) => {
       let query = {};
-      if(req.query.productId) {
-        query= {
-          productId : req.query.productId
-        }
+      if (req.query.productId) {
+        query = {
+          productId: req.query.productId,
+        };
       }
       const result = await advertiseItemsCollection.find(query).toArray();
-      res.send(result)
-    })
+      res.send(result);
+    });
 
     // advertise a product
-    app.post('/advertiseItem', async(req, res) =>{
+    app.post("/advertiseItem", async (req, res) => {
       const advertiseDetails = req.body;
       const result = await advertiseItemsCollection.insertOne(advertiseDetails);
-      res.send(result)
-    })
+      res.send(result);
+    });
 
     /**
      * @order_route
      * post a booking
      */
     // get all orders
-    app.get('/orders', async(req, res) =>{
+    app.get("/orders", async (req, res) => {
       let query = {};
-      if(req.query.email) {
-        query= {
-          buyerEmail : req.query.email
-        }
+      if (req.query.email) {
+        query = {
+          buyerEmail: req.query.email,
+        };
       }
       const result = await ordersCollection.find(query).toArray();
-      res.send(result)
-    })
+      res.send(result);
+    });
 
     // post a order
-    app.post('/buy', async(req, res) =>{
+    app.post("/buy", async (req, res) => {
       const orderDetails = req.body;
       const order = await ordersCollection.insertOne(orderDetails);
-      res.send(order) 
-    })
+      res.send(order);
+    });
 
     // Delete a orders
-    app.delete('/orders/:id', async(req, res) =>{
+    app.delete("/orders/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id : ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const orderDelete = await ordersCollection.deleteOne(query);
-      res.send(orderDelete)
-    })
-  
-
+      res.send(orderDelete);
+    });
   } finally {
   }
 }
