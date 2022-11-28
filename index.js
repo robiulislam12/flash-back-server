@@ -27,6 +27,7 @@ async function run() {
     const usersCollection = database.collection("users");
     const productsCollection = database.collection("products");
     const reportedItemsCollection = database.collection("reportedItems");
+    const advertiseItemsCollection = database.collection("advertiseItems");
 
     /**
      * Here all is users routes
@@ -81,6 +82,7 @@ async function run() {
      * delete a product
      * report a product
      * get all reported items
+     * advertise a product
      */
     // get all products
     app.get("/products", async (req, res) => {
@@ -135,6 +137,24 @@ async function run() {
       res.send(result)
     })
 
+     // get advertisement items
+     app.get('/advertisementItems', async(req, res) =>{
+      let query = {};
+      if(req.query.productId) {
+        query= {
+          productId : req.query.productId
+        }
+      }
+      const result = await advertiseItemsCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    // advertise a product
+    app.post('/advertiseItem', async(req, res) =>{
+      const advertiseDetails = req.body;
+      const result = await advertiseItemsCollection.insertOne(advertiseDetails);
+      res.send(result)
+    })
   
 
   } finally {
