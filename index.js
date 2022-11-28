@@ -52,7 +52,7 @@ async function run() {
     // update verify
     app.put("/userUpdate", async (req, res) => {
       const filter = { email: req.query.email };
-      console.log(filter)
+      console.log(filter);
       const updateDoc = {
         $set: {
           verified: true,
@@ -140,12 +140,12 @@ async function run() {
     });
 
     // Reported items delete
-    app.delete('/reportedItem/:id', async(req, res) =>{
+    app.delete("/reportedItem/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = {_id : ObjectId(id)}
+      const filter = { _id: ObjectId(id) };
       const deleteReported = await reportedItemsCollection.deleteOne(filter);
-      res.send(deleteReported)
-    })
+      res.send(deleteReported);
+    });
 
     // get advertisement items
     app.get("/advertisementItems", async (req, res) => {
@@ -164,6 +164,19 @@ async function run() {
       const advertiseDetails = req.body;
       const result = await advertiseItemsCollection.insertOne(advertiseDetails);
       res.send(result);
+    });
+
+    /**
+     * @DELETE_advertise_and_order
+     */
+    // delete advertisement and orders product
+    app.post("/deleteAndPost", async (req, res) => {
+      const id = req.query.productId;
+      const filter = { productId: id };
+      const orderDetails = req.body;
+      const order = await ordersCollection.insertOne(orderDetails);
+      const deleteOne = await advertiseItemsCollection.deleteOne(filter);
+      res.send(deleteOne);
     });
 
     /**
