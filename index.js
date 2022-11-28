@@ -50,8 +50,9 @@ async function run() {
     });
 
     // update verify
-    app.post("/userUpdate", async (req, res) => {
+    app.put("/userUpdate", async (req, res) => {
       const filter = { email: req.query.email };
+      console.log(filter)
       const updateDoc = {
         $set: {
           verified: true,
@@ -100,8 +101,8 @@ async function run() {
         };
       }
 
-      const users = await productsCollection.find(query).toArray();
-      res.send(users);
+      const products = await productsCollection.find(query).toArray();
+      res.send(products);
     });
     // create a products
     app.post("/product", async (req, res) => {
