@@ -26,6 +26,7 @@ async function run() {
     const database = client.db("flashBack");
     const usersCollection = database.collection("users");
     const productsCollection = database.collection("products");
+    const reportedItemsCollection = database.collection("reportedItems");
 
     /**
      * Here all is users routes
@@ -47,7 +48,7 @@ async function run() {
     });
 
     // update verify
-    app.post("/user", async (req, res) => {
+    app.post("/userUpdate", async (req, res) => {
       const filter = { email: req.query.email };
       const updateDoc = {
         $set: {
@@ -75,11 +76,26 @@ async function run() {
 
     /**
      * @products_route
-     *
+     * get all
+     * create a product
+     * delete a product
+     * report a product
+     * get all reported items
      */
     // get all products
     app.get("/products", async (req, res) => {
       let query = {};
+
+      if(req.query.email){
+        query = {
+            sellerEmail: req.query.email
+        }
+      }
+      if(req.query.category){
+        query = {
+          category : req.query.category
+        }
+      }
 
       const users = await productsCollection.find(query).toArray();
       res.send(users);
@@ -90,6 +106,37 @@ async function run() {
       const result = await productsCollection.insertOne(productDetails);
       res.send(result);
     });
+
+    // Delete a product
+    app.delete("/product/:id", async (req, res) => {
+      const { id } = req.params;
+      const filter = { _id: ObjectId(id) };
+      const result = await productsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
+      // get reported items
+      app.get('/reportedItems', async(req, res) =>{
+        let query = {};
+        if(req.query.reportedId) {
+          query= {
+            reportedProductId : req.query.reportedId
+          }
+        }
+        const result = await reportedItemsCollection.find(query).toArray();
+        res.send(result)
+      })
+
+    // Report a Product
+    app.post('/reportedItem', async(req, res) =>{
+      const reportedDetails = req.body;
+      // console.log(reportedDetails)
+      const result = await reportedItemsCollection.insertOne(reportedDetails);
+      res.send(result)
+    })
+
+  
+
   } finally {
   }
 }
